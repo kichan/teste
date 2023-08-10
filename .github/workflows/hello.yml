@@ -12,3 +12,6 @@ jobs:
               uses: actions/checkout@v3
             - name: echo the message
               run: echo "Hola christian!"
+            - name: Dime la fecha
+              run: date
+            - run: ls -l
