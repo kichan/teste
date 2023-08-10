@@ -6,7 +6,7 @@ on:
             - master
 jobs:
     hello_word:
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-latest
         steps:
-            - name: Echo the message
-              run: echo "Hola christian!"
+            - name: Check out repository code
+              uses: actions/checkout@v3
