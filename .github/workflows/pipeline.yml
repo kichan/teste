@@ -1,12 +1,13 @@
-name: Deployment Pipeline
+name: pipeline
 on:
     push:
         branches:
-          - master
+            - master
 jobs:
-    deploy:
-        runs-on: ubuntu-lates
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                fetch-depth: 0
+    build:
+  
+      runs-on: windows-latest   # alternate runner OS is: ubuntu-latest
+  
+      steps:
+      - name: powerplatform-actions
+        uses: microsoft/powerplatform-actions@v0.10.10
