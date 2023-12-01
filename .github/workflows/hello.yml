@@ -6,7 +6,7 @@ on:
             - master
 jobs:
     hello_word:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
         steps:
          - name: Check out repository code
            uses: actions/checkout@v4
@@ -14,4 +14,9 @@ jobs:
            run: |
                 Invoke-WebRequest -Uri https://aka.ms/powerplatform-cli/download -OutFile ppcli.msi
                 Start-Process msiexec -Wait -ArgumentList '/i ppcli.msi /quiet /norestart'
+           shell: pwsh
+         - name: Debug Output
+           run: |
+                echo "Debug information..."
+                # Agrega más comandos de depuración según sea necesario
            shell: pwsh
