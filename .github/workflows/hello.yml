@@ -8,5 +8,10 @@ jobs:
     hello_word:
         runs-on: ubuntu-latest
         steps:
-            - name: Check out repository code
-              uses: actions/checkout@v4
+         - name: Check out repository code
+           uses: actions/checkout@v4
+         - name: Install Power Platform CLI
+           run: |
+                Invoke-WebRequest -Uri https://aka.ms/powerplatform-cli/download -OutFile ppcli.msi
+                Start-Process msiexec -Wait -ArgumentList '/i ppcli.msi /quiet /norestart'
+           shell: pwsh
