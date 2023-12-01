@@ -1,4 +1,4 @@
-name: Say Hello
+name: Hello
 
 on:
     push:
@@ -9,9 +9,4 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Check out repository code
-              uses: actions/checkout@v3
-            - name: echo the message
-              run: echo "Hola christian!"
-            - name: Dime la fecha
-              run: date
-            - run: ls -l
+              uses: actions/checkout@v4
