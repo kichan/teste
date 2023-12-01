@@ -14,12 +14,6 @@ jobs:
            run: |
                 Invoke-WebRequest -Uri https://aka.ms/powerplatform-cli/download -OutFile ppcli.msi
                 Start-Process msiexec -Wait -ArgumentList '/i ppcli.msi /quiet /norestart'
+                pp --version
            shell: pwsh
-         - name: Connect to Power Apps
-           run: |
-                pp auth login --environment "d5902e03-c12a-490f-89ca-ef381d7eb834" --username "christianVegaCervantes@UFRP294.onmicrosoft.com" --password "4l0ns0CV"
-           shell: pwsh
-         - name: List Power Apps Solutions
-           run: |
-             pp solution list
-           shell: pwsh
+
