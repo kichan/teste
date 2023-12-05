@@ -1,0 +1,66 @@
+name: Create Dev Test and Prod Environments
+# clean up the environment for the next demo
+#  clean up environment tasks for QA and Prod 
+
+on:
+  push:
+    branches:
+        - master
+  workflow_dispatch:
+    inputs:
+    
+     env_name:
+      description: name for the environment to be created
+      required: true
+      default: T2-POWE
+     
+     client_id:
+      description: service principal client id
+      required: true
+      default: 'c4590013-9e55-4f67-b0a6-e3474a432a70'
+
+     user_id:
+      description: AAD object id for the user
+      required: true
+      default: 'cvega@inka628.onmicrosoft.com'
+   
+ #Do Not change these values
+     
+env:
+    #edit your values here
+      CERT_ENVIRONMENT_URL: 'https://org8b325d37.crm.dynamics.com/'
+      PROD_ENVIRONMENT_URL: 'https://t2-powepro01.crm.dynamics.com/'
+      USERNAME            : 'cvega@inka628.onmicrosoft.com'
+      CLIENT_ID           : '6c48c74a-a96b-4869-8536-ae20f08cf1ee'
+      TENANT_ID           : '7d404e27-f3ba-42fc-b5b6-4ec755d91974'
+      
+jobs:
+  Create-Environments:
+    runs-on: ubuntu-latest
+    # or you can say runs-on: ubuntu-latest
+    env:
+      RUNNER_DEBUG: 1
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        lfs: true
+        
+    - name: Create Developer Environment
+      uses: microsoft/powerplatform-actions/create-environment@v0
+      with:
+        user-name      : ${{env.USERNAME}}
+        password-secret: ${{secrets.PASSW_SECRET}}
+        name           : ${{github.event.inputs.env_name}}_Dev
+        type           : Sandbox
+        region         : unitedstates
+        domain         : ${{ github.event.inputs.env_name}}Dev
+    
+    - name: assign-user to developer environment
+      uses:  microsoft/powerplatform-actions/assign-user@v0
+      with:
+        user-name      : ${{env.USERNAME}}
+        password-secret: ${{secrets.PASSW_SECRET}}
+        environment    : 'https://${{ github.event.inputs.env_name}}Dev.dynamics.com'
+        user           : ${{github.event.inputs.user_id}}
+        role           : System Administrator
