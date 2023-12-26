@@ -1,4 +1,4 @@
-$Passwrod        = "4l0ns0CV"
+$Passwrod        = ""
 $Username        = "cvega@inka628.onmicrosoft.com"
 $EnvironmentName = "Default-7d404e27-f3ba-42fc-b5b6-4ec755d91974"
 try{ 
