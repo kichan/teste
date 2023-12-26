@@ -1,0 +1,79 @@
+name: import-solution
+# Export and import solution from DEV environment for PROD
+# unpack it and prepare, commit and push a git branch with the changes
+
+on:
+  push:
+    branches:
+        - master
+  workflow_dispatch:
+    inputs:
+      # Change this value
+      #Abajo puedes colocar mas inputs
+       solution_target_folder: 
+        description: 'folder name to be created and checked in *do not change*'
+        required: true
+        default: solutions/
+
+env:
+#edit your values here
+  solution_name           : SeguimientoDisenho
+#  CERT_ENVIRONMENT_URL    : 'https://t1-sdasdes01.crm.dynamics.com/'
+  PROD_ENVIRONMENT_URL     : 'https://t2-powepro01.crm.dynamics.com/'
+#  CLIENT_ID               : '9b1e3d80-1109-4b34-b604-b64d061aa0bb'
+#  TENANT_ID               : '5d93ebcc-f769-4380-8b7e-289fc972da1b'
+  solution_exported_folder: out/exported/
+  solution_source_folder  : solutions/
+  solution_folder         : out/solutions/
+jobs:
+  #Inicializando export-action  
+    Export-And-Import-from-Dev:
+      runs-on: windows-latest
+      environment: Development
+      steps:
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - name: Install NuGet
+        run: |
+            choco install nuget.commandline -y
+        shell: powershell
+      - name: Install PAC
+        uses: microsoft/powerplatform-actions/actions-install@v1
+        with:
+          pac-version-override: 1.28.3
+      - name: export-unmanaged-solution action (No Administrada)
+        uses: microsoft/powerplatform-actions/export-solution@v0
+        with:
+          environment-url     : ${{secrets.CERT_ENVIRONMENT_URL}}
+          app-id              : ${{secrets.CLIENT_ID}}
+          client-secret       : ${{secrets.CLIENT_SECRET}}
+          tenant-id           : ${{secrets.TENANT_ID}}
+          solution-name       : ${{env.solution_name}}
+          solution-output-file: ${{env.solution_exported_folder}}/${{env.solution_name}}.zip
+      - name: export-managed-solution action (Administrada)
+        uses: microsoft/powerplatform-actions/export-solution@v0
+        with:
+          environment-url     : ${{secrets.CERT_ENVIRONMENT_URL}}
+          app-id              : ${{secrets.CLIENT_ID}}
+          client-secret       : ${{secrets.CLIENT_SECRET}}
+          tenant-id           : ${{secrets.TENANT_ID}}
+          solution-name       : ${{env.solution_name}}
+          solution-output-file: ${{env.solution_exported_folder}}/${{env.solution_name}}_managed.zip
+          managed             : true
+      - name: Import solution to prod env
+        uses: microsoft/powerplatform-actions/import-solution@v0
+        with:
+          environment-url   : ${{env.PROD_ENVIRONMENT_URL}}
+          app-id            : ${{secrets.CLIENT_ID}}
+          client-secret     : ${{secrets.CLIENT_SECRET}}
+          tenant-id         : ${{secrets.TENANT_ID}}
+          solution-file     : ${{env.solution_exported_folder}}/${{env.solution_name}}.zip
+          run-asynchronously: true
+          force-overwrite   : true
+          publish-changes   : true
+      - name: Script
+        run: ./ActivateFlows.ps1
+        shell: pwsh
